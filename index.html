@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link href="https://fonts.googleapis.com/css?family=Bungee+Shade|Righteous" rel="stylesheet">
+  <title>iQuake - An app with all your earthquakes news and updates.</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+    }
+
+    .body {
+      background-image: linear-gradient(120deg, #f6d365 0%, #fda085 100%);
+    }
+
+    .container {
+      margin: 0 auto;
+      width: 77vw;
+      height: 100vh;
+    }
+
+    .h1 {
+      margin-top: 5%;
+      color: white;
+      font-size: 4em;
+      text-align: center;
+      font-family: 'Righteous', cursive;
+      text-transform: uppercase;
+    }
+
+    .text {
+      font-family: 'Nunito', sans-serif;
+    }
+
+  </style>
+</head>
+
+<body class="body">
+  <div class="container">
+    <h1 class="h1">iQuake</h1>
+
+    <div class="graph" id="timeline"></div>
+
+    <div class="graph text" id="googleDetails"></div>
+
+    <div class="news text" id="geoNetNews"></div>
+
+  </div>
+
+  <!-- end points also means parameters -->
+  <!-- Repsonse means the data we will get back/console.log(data) -->
+  <!-- May need to use more than one ajax request and call them at different times as it is asyncriniste -->
+
+  <!-- NEWS API -->
+  <!-- https://api.geonet.org.nz/news/geonet -->
+
+  <!-- QUAKES FELT IN PAST 365 DAYS MAX 100 QUAKES API -->
+  <!-- https://api.geonet.org.nz/quake?MMI=3 -->
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+  <script>
+    (function() {
+      var location = document.getElementById('location');
+      console.log('working');
+
+      // Initialise ajax call to connect to the live API data
+      $.ajax({
+        url: 'https://api.geonet.org.nz/quake?MMI=3',
+        dataType: 'json',
+        type: 'GET',
+        success: function(data) {
+          // Access to inidivdual quakes
+          console.log(data.features[0].properties);
+
+          console.log(data.features[0].properties.time);
+
+// -----------------------------------------------------------------------------
+
+    // TIMELINE CHART
+
+          google.charts.load('current', {'packages':['timeline']});
+          google.charts.setOnLoadCallback(drawChart);
+
+          function drawChart() {
+            var chartContainer = document.getElementById('timeline');
+            var chart = new google.visualization.Timeline(chartContainer);
+            var dataTable = new google.visualization.DataTable();
+
+            dataTable.addColumn({ type: 'string', id: 'President' });
+            dataTable.addColumn({ type: 'date', id: 'Start' });
+            dataTable.addColumn({ type: 'date', id: 'End' });
+            dataTable.addRows([
+              [ 'Washington', new Date(1789, 3, 30), new Date(1797, 2, 4) ],
+              [ 'Adams',      new Date(1797, 2, 4),  new Date(1801, 2, 4) ],
+              [ 'Jefferson',  new Date(1801, 2, 4),  new Date(1809, 2, 4) ]]);
+
+            chart.draw(dataTable);
+          }
+
+
+// -----------------------------------------------------------------------------
+
+        },
+        error: function(error) {
+          console.log(error);
+          console.log('Oops! Something isn\'t working');
+        }
+      })
+
+    }()); // IIFE Ends
+
+  </script>
+</body>
+</html>
